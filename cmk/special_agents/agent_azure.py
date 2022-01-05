@@ -285,6 +285,11 @@ class GraphApiClient(BaseApiClient):
         uri = next_page.replace(self._base_url, "")
         return self.users(data=data, uri=uri)
 
+    def users_count(self):
+        self._headers['ConsistencyLevel'] = 'eventual'
+        response = self._get('users/$count')
+        return response
+
     def organization(self):
         return self._get("organization", key="value")
 
@@ -747,8 +752,8 @@ def write_section_ad(graph_client):
     section = AzureSection("ad")
 
     # users
-    users = graph_client.users()
-    section.add(["users_count", len(users)])
+    users = graph_client.users_count()
+    section.add(["users_count", users])
 
     # organization
     orgas = graph_client.organization()
